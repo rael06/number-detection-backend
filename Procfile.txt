@@ -1,0 +1,1 @@
+web: gunicorn Djangonumberdetection.wsgi --log-file –
