@@ -100,10 +100,12 @@ def get_operation_results(request):
 
     if operator is not '':
         result = compute_operation(operation['predicted_number1'], operation['predicted_number2'], operator)
+        operation['result'] = result
         operation['operationString'] = str(operation['predicted_number1']) + " " + operator + " " + str(
             operation['predicted_number2']) + ' = ' + str('{:0.3f}'.format(result))
     else:
         operation['operationString'] = str(operation['predicted_number1'])
+
     return JsonResponse(operation)
 
 @api_view(['GET'])
