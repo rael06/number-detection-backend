@@ -69,7 +69,7 @@ def compute_operation(n1, n2, operator):
         if n2 != 0:
             return n1 / n2
         else:
-            return float("inf")
+            return 999999999.999
 
 
 def get_predicted_number(number):
