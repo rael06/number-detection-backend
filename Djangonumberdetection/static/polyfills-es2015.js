@@ -6238,8 +6238,8 @@ var __importDefault = (undefined && undefined.__importDefault) || function (mod)
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\rael0\source\repos\HandWritten-digits-calculator\HandWritten-digits-calculator\ClientApp\src\polyfills.ts */"./src/polyfills.ts");
-module.exports = __webpack_require__(/*! C:\Users\rael0\source\repos\HandWritten-digits-calculator\HandWritten-digits-calculator\ClientApp\node_modules\@angular-devkit\build-angular\src\angular-cli-files\models\jit-polyfills.js */"./node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/jit-polyfills.js");
+__webpack_require__(/*! /Users/rael/Documents/campusid/number-detection/frontend/ClientApp/src/polyfills.ts */"./src/polyfills.ts");
+module.exports = __webpack_require__(/*! /Users/rael/Documents/campusid/number-detection/frontend/ClientApp/node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/jit-polyfills.js */"./node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/jit-polyfills.js");
 
 
 /***/ })

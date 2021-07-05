@@ -93,6 +93,7 @@ def get_operation_results(request):
         path = save_numbers_draws(number1)
 
     predictions = get_predictions(path)
+    predictions = sorted(predictions, key=lambda x: x['name'])
     delete_path(path)
     map_predictions(predictions, number1, number2)
     operation['predicted_number1'] = get_predicted_number(number1)
@@ -108,6 +109,7 @@ def get_operation_results(request):
 
     return JsonResponse(operation)
 
+
 @api_view(['GET'])
-def apiTest(request) :
-    return JsonResponse({'message':'api running'})
+def apiTest(request):
+    return JsonResponse({'message': 'api running'})
