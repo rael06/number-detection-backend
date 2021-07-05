@@ -59,14 +59,14 @@ def map_predictions(predictions, number1, number2):
 
 
 def compute_operation(n1, n2, operator):
-    if operator is '+':
+    if operator == '+':
         return n1 + n2
-    elif operator is '-':
+    elif operator == '-':
         return n1 - n2
-    elif operator is 'x':
+    elif operator == 'x':
         return n1 * n2
-    elif operator is '/':
-        if n2 is not 0:
+    elif operator == '/':
+        if n2 != 0:
             return n1 / n2
         else:
             return float("inf")
@@ -99,7 +99,7 @@ def get_operation_results(request):
     operation['predicted_number1'] = get_predicted_number(number1)
     operation['predicted_number2'] = get_predicted_number(number2)
 
-    if operator is not '':
+    if operator != '':
         result = compute_operation(operation['predicted_number1'], operation['predicted_number2'], operator)
         operation['result'] = result
         operation['operationString'] = str(operation['predicted_number1']) + " " + operator + " " + str(
