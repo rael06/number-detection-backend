@@ -102,9 +102,8 @@ def get_operation_results(request):
     if operator != '':
         result = compute_operation(operation['predicted_number1'], operation['predicted_number2'], operator)
         operation['result'] = result
-        roundResult = round(result, 3)
         operation['operationString'] = str(operation['predicted_number1']) + " " + operator + " " + str(
-            operation['predicted_number2']) + ' = ' + str(roundResult)
+            operation['predicted_number2']) + ' = ' + str(result)
     else:
         operation['operationString'] = str(operation['predicted_number1'])
 
