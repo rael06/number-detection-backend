@@ -59,10 +59,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:4200',
-    'http://localhost'
-)
+CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST', 'http://localhost:4200').split(',')
 
 ROOT_URLCONF = 'Djangonumberdetection.urls'
 
