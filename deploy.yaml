@@ -1,41 +1,46 @@
 trigger:
-  - main # Triggers the pipeline on changes to the 'main' branch
+  - main # Adjust this to your specific branch
 
 pool:
-  vmImage: "ubuntu-latest" # Specifies the use of the latest Ubuntu image for the build agent
+  vmImage: "ubuntu-latest"
 
 steps:
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: "3.x" # Specifies the Python version to use
+      versionSpec: "3.x"
       addToPath: true
 
   - script: |
-      python -m venv env  # Creates a virtual environment
-      source env/bin/activate  # Activates the virtual environment
-      pip install --upgrade pip  # Upgrades pip
-      pip install -r requirements.txt  # Installs dependencies
-    displayName: "Set up Python environment and install dependencies"
+      python -m venv env
+      source env/bin/activate
+      pip install --upgrade pip
+      pip install --upgrade setuptools  # Upgrade setuptools to the latest version
+    displayName: "Set up Python environment and upgrade setuptools"
 
   - script: |
-      source env/bin/activate  # Activates the virtual environment
-      python manage.py test  # Runs Django tests
+      source env/bin/activate
+      pip install -r requirements.txt
+    displayName: "Install dependencies"
+
+  - script: |
+      source env/bin/activate
+      python manage.py test
     displayName: "Run tests"
 
   - script: |
-      source env/bin/activate  # Activates the virtual environment
-      python manage.py collectstatic --noinput  # Collects static files
+      source env/bin/activate
+      python manage.py collectstatic --noinput
     displayName: "Collect static files"
 
   - task: ArchiveFiles@2
     inputs:
-      rootFolderOrFile: "$(System.DefaultWorkingDirectory)" # Specifies the root folder
+      rootFolderOrFile: "$(System.DefaultWorkingDirectory)"
       includeRootFolder: false
       archiveType: "zip"
-      archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip" # Defines the output archive file
+      archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip"
       replaceExistingArchive: true
 
   - task: PublishBuildArtifacts@1
     inputs:
-      PathtoPublish: "$(Build.ArtifactStagingDirectory)" # Specifies the path to publish
+      PathtoPublish: "$(Build.ArtifactStagingDirectory)"
       ArtifactName: "drop"
