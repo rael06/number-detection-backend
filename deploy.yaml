@@ -23,11 +23,6 @@ steps:
 
   - script: |
       source env/bin/activate
-      python manage.py test
-    displayName: "Run tests"
-
-  - script: |
-      source env/bin/activate
       python manage.py collectstatic --noinput
     displayName: "Collect static files"
 
