@@ -29,7 +29,7 @@ if os.environ.get('ENV') == 'PRODUCTION':
 else:
     DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'www.number-detection-backend.rael-calitro.ovh', 'number-detection-backend.rael-calitro.ovh']
 
 
 # Application definition
