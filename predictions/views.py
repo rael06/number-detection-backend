@@ -1,60 +1,28 @@
-from django.shortcuts import render
 import os
-import sys
-import pandas as pd
-from keras.preprocessing.image import ImageDataGenerator
-from contextlib import contextmanager
-from Djangonumberdetection import urls
+
+import numpy as np
+from PIL import Image
+
+from predictions.model import predict
 
 
-@contextmanager
-def suppress_stdout():
-    with open(os.devnull, 'w') as devnull:
-        old_stdout = sys.stdout
-        sys.stdout = devnull
-        try:
-            yield
-        finally:
-            sys.stdout = old_stdout
+def load_draw(path):
+    """Loads a drawing like Keras' former flow_from_dataframe did: grayscale, 28x28 with the nearest
+    pixel, values scaled to [0, 1], one channel."""
+    with Image.open(path) as img:
+        if img.mode not in ('L', 'I;16', 'I'):
+            img = img.convert('L')
+        img = img.resize((28, 28), Image.Resampling.NEAREST)
+        return np.asarray(img, dtype='float32')[..., np.newaxis] * (1. / 255)
 
 
 def get_predictions(draws_path):
     numbers = []
-    model = urls.MODEL
-    draws = os.listdir(draws_path)
-    filenames_test = []
-    categories_test = []
-
-    for file in draws:
-        filenames_test.append(file)
-        categories_test.append('')
-
-    df_draws = pd.DataFrame({
-        'filename': filenames_test,
-        'category': categories_test
-    })
-    test_datagen = ImageDataGenerator(rescale=1. / 255)
-    for i in range(df_draws.shape[0]):
-        with suppress_stdout():
-            df_draw = df_draws.iloc[[i]]
-            draw_generator = test_datagen.flow_from_dataframe(
-                df_draw,
-                draws_path,
-                x_col='filename',
-                y_col='category',
-                target_size=(28, 28),
-                class_mode='categorical',
-                color_mode='grayscale'
-            )
-
-        predict = model.predict_generator(draw_generator, steps=1)
-        prediction = predict.argmax()
-        balance = []
-        for b in range(len(predict[0])):
-            balance.append(str('{:0.2f}'.format(predict[0, b] * 100)))
-
-        number = {'name': str(df_draw.iloc[0, 0]), 'digit': int(prediction), 'scores': balance}
-        numbers.append(number)
+    for filename in os.listdir(draws_path):
+        scores = predict(load_draw(os.path.join(draws_path, filename))[np.newaxis, ...])
+        numbers.append({
+            'name': filename,
+            'digit': int(scores.argmax()),
+            'scores': ['{:0.2f}'.format(score * 100) for score in scores[0]],
+        })
     return numbers
-
-# Create your views here.

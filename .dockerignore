@@ -1,0 +1,20 @@
+.git
+.github
+.kamal
+.venv
+.idea
+.vscode
+**/.DS_Store
+**/__pycache__
+*.pyc
+.env
+# The model comes from a volume; the sample drawings stay in git for tests.
+resources
+# Local data and logs of the former deployments.
+db.sqlite3
+debug.log
+Djangonumberdetection/staticfiles
+deploy.yaml
+Procfile.txt
+Dockerfile
+.dockerignore

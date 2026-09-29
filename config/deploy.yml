@@ -1,0 +1,68 @@
+# Deployed with Kamal 2 by .github/workflows/ci-cd.yml, following the conventions of the platform
+# repository rael06/vps (docs/architecture.md).
+service: number-detection-backend
+image: number-detection-backend
+
+servers:
+  web:
+    hosts:
+      - <%= ENV.fetch("VPS_HOST") %>
+    options:
+      read-only: true
+      # The image runs as `app` (uid 1000): its writable places belong to it.
+      tmpfs:
+        - /tmp:rw,noexec,nosuid,size=256m
+        - /app/resources/draws:rw,noexec,nosuid,size=64m,uid=1000,gid=1000
+      cap-drop: ALL
+      security-opt: no-new-privileges
+      memory: 2g
+      pids-limit: 256
+
+# The trained model (model.h5, about 675 MB, not in git) lives on the VPS in this volume, read-only
+# for the app. Filling it once: see « Deployment » in the README.
+volumes:
+  - number-detection-model:/app/resources/model0:ro
+
+# Public through the shared tunnel: *.rael-calitro.ovh → cloudflared → kamal-proxy → this app.
+proxy:
+  host: number-detection-backend.rael-calitro.ovh
+  app_port: 8000
+  healthcheck:
+    path: /up
+    timeout: 10
+  # The proxy is shared: identical in every app (nginx holds 80/443; cloudflared reaches kamal-proxy:80).
+  # A new version applies with « Run workflow » + « Reboot kamal-proxy » (a few seconds of outage).
+  run:
+    publish: false
+    version: v0.10.0
+
+env:
+  clear:
+    ENV: PRODUCTION
+  secret:
+    - SECRET_KEY
+
+logging:
+  options:
+    max-size: 10m
+    max-file: 3
+
+ssh:
+  user: kamal
+  port: <%= ENV.fetch("VPS_SSH_PORT") %>
+  # The key comes from the ssh-agent loaded by the workflow; the host key must match known_hosts.
+  config: .kamal/ssh_config
+  forward_agent: false
+
+# The image goes from the runner to the VPS through the SSH tunnel: no external registry.
+registry:
+  server: localhost:5555
+
+builder:
+  arch: amd64
+
+# Loading the model takes a while: leave room before giving up on a new version.
+deploy_timeout: 180
+
+# Old versions kept on the VPS for `kamal rollback <version>`.
+retain_containers: 5
