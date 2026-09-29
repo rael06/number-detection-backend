@@ -19,4 +19,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=120s \
   CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/up', timeout=4)"]
 # One process (the model takes about 1 GB of memory); threads keep /up answering during a prediction.
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--threads", "4", "--timeout", "120", "Djangonumberdetection.wsgi:application"]
+# No control socket: unused, and it would be created in the home of `app` on a read-only filesystem.
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "1", "--threads", "4", "--timeout", "120", "--no-control-socket", "Djangonumberdetection.wsgi:application"]
